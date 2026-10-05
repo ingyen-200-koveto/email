@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IceMine – Minecraft szerver</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Sora:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f8fc;--bg2:#e4effa;--panel:#ffffffd9;--solid:#fff;--ink:#0a1e2b;--mute:#587184;--ice:#1c8ad6;--deep:#0b3a5b;--line:#0b3a5b1f;--bad:#c62828;--ok:#14884f;--glow:#7fd3ff;--sh:0 18px 40px -22px #0b3a5b66;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#06121b;--bg2:#0a1d2b;--panel:#0f2638d9;--solid:#0f2638;--ink:#e8f4fb;--mute:#8fb1c6;--ice:#5cc0ff;--deep:#bfe7ff;--line:#8fd0ff26;--bad:#ff8a80;--ok:#5fe0a3;--glow:#2a8fd0;--sh:0 18px 40px -22px #000}}
+:root[data-theme="dark"]{--bg:#06121b;--bg2:#0a1d2b;--panel:#0f2638d9;--solid:#0f2638;--ink:#e8f4fb;--mute:#8fb1c6;--ice:#5cc0ff;--deep:#bfe7ff;--line:#8fd0ff26;--bad:#ff8a80;--ok:#5fe0a3;--glow:#2a8fd0;--sh:0 18px 40px -22px #000}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16.5px/1.65 Manrope,system-ui,sans-serif}
+h1,h2,h3,.px,.nick{font-family:Sora,system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.12;margin:0}
+a{color:var(--ice)}
+:focus-visible{outline:3px solid var(--ice);outline-offset:3px}
+[hidden]{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px max(20px,calc((100% - 980px)/2));background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.logo{font:800 21px Sora,sans-serif;letter-spacing:-.02em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.cube{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#c4f1ff,#3fb4ff 55%,#1c6fd6);box-shadow:inset 0 0 0 1px #fff8}
+nav{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+nav a.l{color:var(--mute);text-decoration:none;padding:7px 12px;border-radius:999px;font-weight:600;font-size:15px}
+nav a.l:hover{background:var(--bg2);color:var(--ink)}
+.btn{font:700 14.5px Sora,sans-serif;border:0;cursor:pointer;border-radius:999px;padding:11px 20px;color:#fff;background:linear-gradient(135deg,#3fb4ff,#1c6fd6);box-shadow:0 10px 22px -10px #1c6fd6;text-decoration:none;display:inline-block;transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.btn.alt{background:var(--solid);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.hot{background:var(--ink);color:var(--bg);box-shadow:none}
+.hero{position:relative;overflow:hidden;background:radial-gradient(55% 75% at 85% 5%,color-mix(in srgb,var(--glow) 40%,transparent),transparent 70%),radial-gradient(45% 60% at 5% 0,color-mix(in srgb,var(--ice) 20%,transparent),transparent 70%),var(--bg)}
+.hero .wrap{padding-top:72px;padding-bottom:84px;display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center}
+.hero h1{font-size:clamp(52px,12vw,104px);letter-spacing:-.045em;color:var(--ink)}
+.hero p.lead{font-size:19px;max-width:44ch;margin:18px 0 28px;color:var(--mute)}
+.ip{display:flex;align-items:center;gap:6px;padding:6px;max-width:440px;border-radius:999px;background:var(--panel);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--line),var(--sh)}
+.ip code{flex:1;font:600 17px Sora,sans-serif;padding:0 14px;overflow:auto;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:9px;margin-top:14px;padding:7px 14px;border-radius:999px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);font:600 14px Sora,sans-serif}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--mute)}
+.chip.on i{background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent)}100%{box-shadow:0 0 0 9px transparent}}
+.crystal{max-width:340px;justify-self:center;width:100%;filter:drop-shadow(0 30px 40px color-mix(in srgb,var(--ice) 45%,transparent));animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-12px)}}
+section{padding:76px 0}
+section h2{font-size:clamp(28px,4.5vw,40px);margin-bottom:24px}
+.steps{list-style:none;counter-reset:s;padding:0;margin:0;display:grid;gap:16px;max-width:620px}
+.steps li{counter-increment:s;padding-left:56px;position:relative;min-height:40px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font:800 16px Sora,sans-serif;background:linear-gradient(135deg,#3fb4ff,#1c6fd6)}
+.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.contact>*{background:var(--panel);padding:20px;border-radius:18px;box-shadow:inset 0 0 0 1px var(--line);text-decoration:none;color:var(--mute);display:grid;gap:4px;word-break:break-all}
+.contact b{font:800 17px Sora,sans-serif;color:var(--ink)}
+.contact a{transition:transform .15s,box-shadow .15s}
+.contact a:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px var(--ice),var(--sh)}
+footer{border-top:1px solid var(--line);background:var(--bg2);color:var(--mute);padding:30px 0;font-size:14.5px}
+dialog{border:0;padding:0;border-radius:24px;background:var(--solid);color:var(--ink);width:min(430px,calc(100% - 28px));box-shadow:0 0 0 1px var(--line),0 40px 90px -20px #000a}
+dialog::backdrop{background:rgba(5,18,28,.6);backdrop-filter:blur(6px)}
+.tabs{display:flex;gap:4px;margin:18px 18px 0;padding:4px;background:var(--bg2);border-radius:999px}
+.tabs button{flex:1;font:700 14.5px Sora,sans-serif;padding:10px;border:0;border-radius:999px;background:none;color:var(--mute);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--solid);color:var(--ink);box-shadow:0 2px 8px #0b3a5b26}
+form{padding:22px;display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:700;font-size:14.5px}
+input,select,textarea{font:400 16px Manrope,sans-serif;padding:12px 14px;border-radius:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);width:100%}
+input:focus{border-color:var(--ice);outline:3px solid color-mix(in srgb,var(--ice) 25%,transparent)}
+.msg{min-height:1.4em;font-weight:700;font-size:14.5px}
+.msg.e{color:var(--bad)}.msg.o{color:var(--ok)}
+.hint{font-weight:400;color:var(--mute);font-size:14px}
+.demo{background:var(--bg2);padding:14px;border-radius:12px;font-size:14px;line-height:1.55}
+#profile{display:none;background:var(--bg2);border-top:1px solid var(--line)}
+.pgrid{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
+.card,.pinfo{background:var(--solid);border-radius:22px;box-shadow:inset 0 0 0 1px var(--line),var(--sh);padding:24px}
+.card{text-align:center}
+.card canvas{width:150px;height:150px;border-radius:24px;image-rendering:pixelated;background:var(--bg2)}
+.nick{font-size:21px;margin:14px 0 0;word-break:break-all}
+.pinfo{display:grid;gap:24px}
+.coin{display:flex;gap:16px;align-items:center}
+.coinic{flex:none;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 30% 28%,#ffe9a3,#f2a81f 60%,#c27408);box-shadow:inset 0 0 0 1px #fff6,0 10px 20px -8px #c27408}
+.coinic::after{content:"";display:block;margin:13px;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 3px #8a520540}
+.pinfo dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 18px}
+.pinfo dt{font-weight:800}.pinfo dd{margin:0;color:var(--mute);word-break:break-all}
+@media (max-width:760px){.hero .wrap{grid-template-columns:1fr;padding-top:48px;padding-bottom:60px}.crystal{max-width:190px;order:-1;justify-self:start}.pgrid{grid-template-columns:1fr}section{padding:56px 0}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.crystal,.chip.on i{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#"><span class="cube"></span>IceMine</a>
+  <nav>
+    <a class="l" href="#modok">Játékmódok</a>
+    <a class="l" href="#csatlakozas">Csatlakozás</a>
+    <a class="l" href="#kapcsolat">Kapcsolat</a>
+    <span id="navAuth"></span>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <h1>IceMine</h1>
+      <p class="lead">Fagyott világ, kemény túlélés. Építs jégvárat, bányássz a gleccser alatt, és tartsd melegen a falud.</p>
+      <div class="ip">
+        <code id="ipText">play.icemine.hu</code>
+        <button class="btn hot" id="copyIp" type="button">Másolás</button>
+      </div>
+      <p class="hint" id="copyMsg" style="margin:8px 0 0" aria-live="polite">Java és Bedrock, 1.20 – 1.21.x</p>
+      <span class="chip" id="online"><i></i><span id="onlineTxt">Online: –</span></span>
+    </div>
+    <svg class="crystal" viewBox="0 0 200 200" aria-hidden="true"><polygon points="100,10 30,60 100,100" fill="#d9f3ff"/><polygon points="100,10 170,60 100,100" fill="#a6dfff"/><polygon points="30,60 30,140 100,100" fill="#7ccaf5"/><polygon points="170,60 170,140 100,100" fill="#4aa8e0"/><polygon points="30,140 100,190 100,100" fill="#3a93cf"/><polygon points="170,140 100,190 100,100" fill="#1f6fa8"/></svg>
+  </div>
+</div>
+
+<section id="modok"><div class="wrap">
+  <h2>Játékmódok</h2>
+  <p style="color:var(--mute);margin:0">A játékmódok hamarosan felkerülnek ide.</p>
+</div></section>
+
+<section id="csatlakozas" style="background:var(--bg2)"><div class="wrap">
+  <h2>Így csatlakozhatsz</h2>
+  <ol class="steps">
+    <li>Regisztrálj itt az oldalon a Minecraft neveddel, és erősítsd meg a fiókod az e-mailben kapott linkkel vagy kóddal.</li>
+    <li>Nyisd meg a Minecraftot, és add hozzá a szervert: <b>play.icemine.hu</b></li>
+    <li>Lépj be, és írd be: <b>/login</b> – ugyanazzal a jelszóval, mint az oldalon.</li>
+  </ol>
+</div></section>
+
+<section id="kapcsolat"><div class="wrap">
+  <h2>Kapcsolat</h2>
+  <div class="contact">
+    <a href="mailto:icemine2026@gmail.com"><b>E-mail</b>icemine2026@gmail.com</a>
+    <a href="https://youtube.com/@icemine_1?si=AdKZdLQsWEK8M_tw" target="_blank" rel="noopener"><b>YouTube</b>@icemine_1</a>
+    <a href="https://www.instagram.com/icemine_1" target="_blank" rel="noopener"><b>Instagram</b>@icemine_1</a>
+    <div><b>Discord</b>Hamarosan</div>
+  </div>
+</div></section>
+
+<div id="profile"><div class="wrap" style="padding-top:50px;padding-bottom:60px">
+  <h2 style="margin-bottom:22px">Profilod</h2>
+  <div class="pgrid">
+    <div class="card">
+      <canvas id="head" width="8" height="8" aria-label="Játékos avatar"></canvas>
+      <div class="nick" id="pNick">–</div>
+    </div>
+    <div class="pinfo">
+      <div class="coin"><span class="coinic"></span><div><div class="hint">IceCoin egyenleg</div><div class="px" id="pCoin" style="font-size:36px;color:var(--deep)">0</div></div></div>
+      <dl><dt>Minecraft név</dt><dd id="pName">–</dd><dt>E-mail</dt><dd id="pMail">–</dd></dl>
+    </div>
+  </div>
+</div></div>
+
+<footer><div class="wrap">
+  IceMine nem áll kapcsolatban a Mojang Studiosszal és a Microsofttal. A Minecraft a Mojang védjegye.
+</div></footer>
+
+<dialog id="dlg">
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tLogin" aria-selected="true">Belépés</button>
+    <button role="tab" id="tReg" aria-selected="false">Regisztráció</button>
+  </div>
+  <form id="aform" autocomplete="on">
+    <label>Minecraft név
+      <input name="user" required minlength="3" maxlength="16" autocomplete="username">
+      <span class="hint" id="nameHint" hidden>Ez lesz a játékbeli neved is, később nem módosítható.</span></label>
+    <label id="mailRow" hidden>E-mail
+      <input name="email" type="email" autocomplete="email"></label>
+    <label>Jelszó
+      <input name="pass" type="password" required minlength="6" autocomplete="current-password"></label>
+    <label id="pass2Row" hidden>Jelszó újra
+      <input name="pass2" type="password" autocomplete="new-password"></label>
+    <div class="msg" id="aMsg" aria-live="polite"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" type="submit" id="aBtn">Belépés</button>
+      <button class="btn alt" type="button" id="aClose">Mégse</button>
+    </div>
+  </form>
+  <form id="vform" hidden>
+    <div class="px" style="font-size:19px;color:var(--deep)">Fiók megerősítése</div>
+    <p style="margin:0" id="vInfo"></p>
+    <label>Megerősítő kód
+      <input name="code" maxlength="12" autocomplete="one-time-code" required style="letter-spacing:.15em;text-transform:uppercase"></label>
+    <div class="msg" id="vMsg" aria-live="polite"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" type="submit">Megerősítés</button>
+      <button class="btn alt" type="button" id="vResend">Új kód kérése</button>
+      <button class="btn alt" type="button" id="vClose">Bezárás</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+let token=null,user=null,reg=false,pend=null,cool=0;
+try{token=localStorage.getItem("im_token")}catch(e){}
+const saveTok=t=>{token=t;try{t?localStorage.setItem("im_token",t):localStorage.removeItem("im_token")}catch(e){}};
+async function api(path,body){
+  const o={method:body?"POST":"GET",headers:{"Content-Type":"application/json"}};
+  if(token)o.headers.Authorization="Bearer "+token;
+  if(body)o.body=JSON.stringify(body);
+  try{const r=await fetch(path,o);const d=await r.json().catch(()=>({}));return Object.assign({s:r.status},d)}
+  catch(e){return {s:0,error:"A szerver nem érhető el. Próbáld újra."}}
+}
+$("#copyIp").onclick=async()=>{
+  const m=$("#copyMsg");
+  try{await navigator.clipboard.writeText($("#ipText").textContent);m.textContent="IP kimásolva"}
+  catch(e){m.textContent="Jelöld ki és másold ki kézzel"}
+};
+function online(n){$("#online").classList.toggle("on",n!=null);$("#onlineTxt").textContent=n==null?"Online: –":"Online: "+n+" játékos"}
+async function status(){const d=await api("/api/status");online(d.online==null?null:d.online)}
+
+function drawNav(){
+  $("#navAuth").innerHTML=user
+    ? `<a class="btn alt" href="#profile">${user.name}</a> <button class="btn" id="out" type="button">Kilépés</button>`
+    : `<button class="btn alt" id="inBtn" type="button">Belépés</button> <button class="btn" id="regBtn" type="button">Regisztráció</button>`;
+  if(user){$("#out").onclick=async()=>{await api("/api/logout",{});saveTok(null);user=null;render()}}
+  else{$("#inBtn").onclick=()=>openDlg(false);$("#regBtn").onclick=()=>openDlg(true)}
+}
+function setMode(r){
+  reg=r;
+  $("#tLogin").setAttribute("aria-selected",!r);
+  $("#tReg").setAttribute("aria-selected",r);
+  $("#mailRow").hidden=!r;$("#nameHint").hidden=!r;$("#pass2Row").hidden=!r;
+  $("#mailRow input").required=r;$("#pass2Row input").required=r;
+  $("#aBtn").textContent=r?"Fiók létrehozása":"Belépés";
+  $("#aform").pass.autocomplete=r?"new-password":"current-password";
+  $("#aMsg").textContent="";$("#aMsg").className="msg";
+}
+function openDlg(r){setMode(r);$("#dlg").showModal()}
+$("#tLogin").onclick=()=>setMode(false);
+$("#tReg").onclick=()=>setMode(true);
+$("#aClose").onclick=()=>$("#dlg").close();
+$("#dlg").addEventListener("close",()=>{$("#vform").hidden=true;$("#aform").hidden=false;$(".tabs").hidden=false});
+function err(t){const m=$("#aMsg");m.textContent=t;m.className="msg e"}
+function vmsg(t,c){const m=$("#vMsg");m.textContent=t;m.className="msg "+(c||"")}
+
+function showVerify(name,mail){
+  pend=name;
+  $("#aform").hidden=true;$(".tabs").hidden=true;$("#vform").hidden=false;
+  $("#vInfo").textContent="Küldtünk egy levelet a(z) "+mail+" címre. Kattints benne a linkre, vagy írd be ide a kódot.";
+  vmsg("");
+  if(!$("#dlg").open)$("#dlg").showModal();
+}
+function enter(d){saveTok(d.token);user=d.user;if($("#dlg").open)$("#dlg").close();render();$("#profile").scrollIntoView()}
+
+$("#aform").onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.target,name=f.user.value.trim(),pw=f.pass.value;
+  if(reg&&pw!==f.pass2.value) return err("A két jelszó nem egyezik.");
+  const btn=$("#aBtn");btn.disabled=true;
+  const d=await api(reg?"/api/register":"/api/login",reg?{name,email:f.email.value.trim(),password:pw}:{name,password:pw});
+  btn.disabled=false;
+  if(d.error) return err(d.error);
+  f.reset();
+  if(d.needVerify||d.mail&&reg) return showVerify(d.name||name,d.mail);
+  enter(d);
+};
+$("#vform").onsubmit=async e=>{
+  e.preventDefault();
+  const d=await api("/api/verify",{name:pend,code:e.target.code.value.trim()});
+  if(d.error) return vmsg(d.error,"e");
+  e.target.reset();enter(d);
+};
+$("#vResend").onclick=async()=>{
+  const d=await api("/api/resend",{name:pend});
+  d.error?vmsg(d.error,"e"):vmsg("Új kódot küldtünk.","o");
+};
+$("#vClose").onclick=()=>$("#dlg").close();
+
+function avatar(nick){
+  const c=$("#head"),x=c.getContext("2d");
+  let h=0;for(const ch of nick)h=(h*31+ch.charCodeAt(0))>>>0;
+  const rnd=()=>{h=(h*1664525+1013904223)>>>0;return h/4294967296};
+  const hue=Math.floor(rnd()*360);
+  const skin=`hsl(${20+Math.floor(rnd()*20)} 45% ${45+Math.floor(rnd()*30)}%)`;
+  const hair=`hsl(${hue} 40% ${15+Math.floor(rnd()*30)}%)`;
+  const eye=`hsl(${hue} 70% 45%)`;
+  x.clearRect(0,0,8,8);
+  for(let i=0;i<8;i++)for(let j=0;j<8;j++){
+    x.fillStyle=(j<2||(j<3&&rnd()<.5)||((i===0||i===7)&&j<4))?hair:skin;
+    x.fillRect(i,j,1,1);
+  }
+  x.fillStyle="#fff";x.fillRect(1,4,2,1);x.fillRect(5,4,2,1);
+  x.fillStyle=eye;x.fillRect(2,4,1,1);x.fillRect(5,4,1,1);
+  x.fillStyle="rgba(0,0,0,.28)";x.fillRect(3,6,2,1);
+}
+function render(){
+  drawNav();
+  const p=$("#profile");
+  if(!user){p.style.display="none";return}
+  p.style.display="block";
+  $("#pNick").textContent=user.name;$("#pName").textContent=user.name;$("#pMail").textContent=user.email||"–";
+  $("#pCoin").textContent=(user.coins||0).toLocaleString("hu-HU");
+  avatar(user.name);
+}
+
+(async function init(){
+  render();status();setInterval(status,6e4);
+  const m=location.search.match(/megerosites=([A-Za-z0-9_]{3,16}):([A-Za-z0-9]{12})/);
+  if(m){
+    try{history.replaceState(null,"",location.pathname)}catch(e){}
+    const d=await api("/api/verify",{name:m[1],code:m[2]});
+    if(d.error){openDlg(false);return err(d.error)}
+    return enter(d);
+  }
+  if(token){
+    const d=await api("/api/me");
+    if(d.user){user=d.user}else if(d.s===401){saveTok(null)}
+    render();
+  }
+})();
+})();
+</script>
+</body>
+</html>
